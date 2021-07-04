@@ -1,6 +1,7 @@
 '''
 Module containing various base 3D entities.  Any of these entities could be combined to form a composite entity.
 '''
+import math
 
 
 
@@ -15,9 +16,12 @@ class Entity():
     def assign_proximity_effect(self) -> None:
         ...
 
-    
 
 
+
+class Line(Entity):
+    def __init__(self, point1, point2) -> None:
+        ...
 
 
 
@@ -28,12 +32,21 @@ class Sphere(Entity):
 
 
 class Pipe(Entity):
-    def __init__(self, radius: float=1.0, points: list) -> None:
-        ...
+    def __init__(self, points: list, radius: float=1.0) -> None:
+        self.points = points
+        self.radius = radius
+
+    @property
+    def end_to_end_length(self):
+        return math.dist(self.points[0], self.points[-1])
+
+    @property
+    def segments(self):
+        return int(5 + self.end_to_end_length / 5)
 
 
 class Cuboid(Entity):
-    def __init__(self, width: float=1.0, width: float=1.0, height: float=1.0) -> None:
+    def __init__(self, width: float=1.0, height: float=1.0) -> None:
         ...
 
 

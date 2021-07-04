@@ -61,7 +61,18 @@
             //axesHelper = new THREE.AxesHelper(1);
             //scene.add(axesHelper);
 
-            add_pipe([[0, 0 ,0], [5, 1, 0], [15, 2, 5]], 'blue');
+            {% for pipe in world.pipes %}
+                add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
+            {% endfor %}
+
+            // {-% for  in  %}
+
+            // {-% for  in  %}
+
+            // {-% for  in  %}
+
+            // {-% for  in  %}
+
         };
 
         function animate() {
@@ -71,13 +82,14 @@
             counter = counter + 1;
         };
 
-        function add_pipe(points, color) {
+        function add_pipe(points, color, radius, segments) {
             var curve_vectors = [];
             for (var i=0; i < points.length; i++) {
                 curve_vectors.push(new THREE.Vector3(points[i][0], points[i][1], points[i][2]).multiplyScalar(scale));
             }
             curve = new THREE.CatmullRomCurve3(curve_vectors);
-            tube = new THREE.TubeGeometry(curve, 15, radius, 8, false);
+            var radialSegments = Math.floor(8 + 5.2 * Math.log(radius));
+            tube = new THREE.TubeGeometry(curve, segments, radius, radialSegments, false);
             pipe = new THREE.Mesh(tube, material_blue)
             scene.add(pipe);
         };
