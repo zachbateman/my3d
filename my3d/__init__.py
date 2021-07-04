@@ -1,3 +1,3 @@
 from .world import World
 from . import entities
-from .entities import Entity, Pipe
+from .entities import Entity, Pipe, Line, Sphere

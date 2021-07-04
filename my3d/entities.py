@@ -20,14 +20,17 @@ class Entity():
 
 
 class Line(Entity):
-    def __init__(self, point1, point2) -> None:
-        ...
+    def __init__(self, point1, point2, color='red') -> None:
+        self.point1 = point1
+        self.point2 = point2
+        self.color = color
 
 
 
 class Sphere(Entity):
-    def __init__(self, radius: float=1.0) -> None:
-        ...
+    def __init__(self, location, radius: float=1.0) -> None:
+        self.location = location
+        self.radius = radius
 
 
 

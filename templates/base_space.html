@@ -53,8 +53,9 @@
             scene.add(light.target);
 
             wirefloor = new THREE.Mesh(
-                new THREE.PlaneGeometry(1000, 1000, 100, 100),
-                new THREE.MeshBasicMaterial({color: 0x224466, wireframe: true, opacity: 0.25, transparent: true})
+                new THREE.PlaneGeometry(300, 300, 100, 100),
+                // new THREE.MeshBasicMaterial({color: 0x224466, wireframe: true, opacity: 0.25, transparent: true})
+                new THREE.MeshBasicMaterial({color: 0x334455, wireframe: true, opacity: 0.25, transparent: true})
             );
             scene.add(wirefloor);
 
@@ -65,9 +66,13 @@
                 add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
             {% endfor %}
 
-            // {-% for  in  %}
+            {% for line in world.lines %}
+                add_line({{ line.point1 }}, {{ line.point2 }}, '{{ line.color }}')
+            {% endfor %}
 
-            // {-% for  in  %}
+            {% for sphere in world.spheres %}
+                add_sphere({{ sphere.location }}, {{ sphere.radius }});
+            {% endfor %}
 
             // {-% for  in  %}
 
@@ -94,16 +99,28 @@
             scene.add(pipe);
         };
 
-        function add_line(point_1, point_2) {
+        function add_line(point_1, point_2, color) {
             var points = [
                 new THREE.Vector3(point_1[0], point_1[1], point_1[2]).multiplyScalar(scale),
-                new THREE.Vector3(point_1[0], point_1[1], point_1[2]).multiplyScalar(scale),
+                new THREE.Vector3(point_2[0], point_2[1], point_2[2]).multiplyScalar(scale),
             ];
             var line = new THREE.Line(
                 new THREE.BufferGeometry().setFromPoints(points),
-                new THREE.LineBasicMaterial({color: 0x22cc77}),
+                // new THREE.LineBasicMaterial({color: 0x22cc77}),
+                new THREE.LineBasicMaterial({color: color}),
             );
             scene.add(line);
+        }
+
+        function add_sphere(location, radius) {
+            var segments = Math.floor(8 + 5 * Math.log(radius));
+            console.log(segments);
+            var sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(radius, segments, segments),
+                material_blue,
+            );
+            sphere.position.set(location[0], location[1], location[2]);
+            scene.add(sphere);
         }
 
         init();
