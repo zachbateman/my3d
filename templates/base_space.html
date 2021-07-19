@@ -21,10 +21,9 @@
         var scale = 1.0;
         var radius = 2;
         var counter = 0;
-        var material_blue, material_green, material_red;
-        material_blue = new THREE.MeshBasicMaterial({color: 0x2277cc, wireframe: true});
-        material_green = new THREE.MeshBasicMaterial({color: 0x22cc77, wireframe: true});
-        material_red = new THREE.MeshBasicMaterial({color: 0x772211, wireframe: true});
+        var blue = 0x2277cc;
+        var green = 0x22cc77;
+        var red = 0x772211;
 
         var objects = [];  // for containing all the 3D user-generated objects
 
@@ -63,7 +62,6 @@
 
             wirefloor = new THREE.Mesh(
                 new THREE.PlaneGeometry(300, 300, 100, 100),
-                // new THREE.MeshBasicMaterial({color: 0x224466, wireframe: true, opacity: 0.25, transparent: true})
                 new THREE.MeshBasicMaterial({color: 0x334455, wireframe: true, opacity: 0.25, transparent: true})
             );
             scene.add(wirefloor);
@@ -82,46 +80,22 @@
             {% for sphere in world.spheres %}
                 add_sphere({{ sphere.location }}, {{ sphere.radius }});
             {% endfor %}
-
-            // {-% for  in  %}
-
-            // {-% for  in  %}
-
         };
 
         function animate() {
-            // requestAnimationFrame(animate);
-            // controls.update();
-            // renderer.render(scene, camera);
-            // counter = counter + 1;
-
             requestAnimationFrame(animate);
             render();
         };
 
         function render() {
             raycaster.setFromCamera(mouse, camera);
-            // const intersection = raycaster.intersectObject(mesh);
-            /*for (var i=0; i < objects.length; i++) {
-                const intersection = raycaster.intersectObject(objects[i]);
-                console.log(intersection);
-                /*if (intersection.length > 0) {
-                    console.log(intersection);
-                }*/
-            //}
 
-            const intersects = raycaster.intersectObjects(scene.children);
-            for (var i=0; i < intersects.length; i++) {
-                //console.log(intersects[i]);
-                intersects[i].object.material.color.set( 0xff0000 );
-                console.log(intersects[i]);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            if (intersects.length > 0) {
+                intersects[0].object.material.color.set(red);
+                console.log(intersects[0]);
             }
 
-            //if ( intersection.length > 0 ) {
-            //    const instanceId = intersection[0].instanceId;
-            //    mesh.setColorAt(instanceId, color.setHex(Math.random() * 0xffffff));
-            //    mesh.instanceColor.needsUpdate = true;
-            //}
             renderer.render(scene, camera);
         }
 
@@ -139,8 +113,10 @@
             }
             curve = new THREE.CatmullRomCurve3(curve_vectors);
             var radialSegments = Math.floor(8 + 5.2 * Math.log(radius));
-            tube = new THREE.TubeGeometry(curve, segments, radius, radialSegments, false);
-            pipe = new THREE.Mesh(tube, material_blue)
+            pipe = new THREE.Mesh(
+                new THREE.TubeGeometry(curve, segments, radius, radialSegments, false),
+                new THREE.MeshBasicMaterial({color: blue, wireframe: true})
+            );
             scene.add(pipe);
             objects.push(pipe);
         };
@@ -152,7 +128,6 @@
             ];
             var line = new THREE.Line(
                 new THREE.BufferGeometry().setFromPoints(points),
-                // new THREE.LineBasicMaterial({color: 0x22cc77}),
                 new THREE.LineBasicMaterial({color: color}),
             );
             scene.add(line);
@@ -163,7 +138,7 @@
             var segments = Math.floor(8 + 5 * Math.log(radius));
             var sphere = new THREE.Mesh(
                 new THREE.SphereGeometry(radius, segments, segments),
-                material_blue,
+                new THREE.MeshBasicMaterial({color: blue, wireframe: true}),
             );
             sphere.position.set(location[0], location[1], location[2]);
             scene.add(sphere);
