@@ -20,7 +20,6 @@
         var camera, scene, renderer;
         var scale = 1.0;
         var radius = 2;
-        var counter = 0;
         var blue = 0x2277cc;
         var green = 0x22cc77;
         var red = 0x772211;
@@ -64,10 +63,11 @@
                 new THREE.PlaneGeometry(300, 300, 100, 100),
                 new THREE.MeshBasicMaterial({color: 0x334455, wireframe: true, opacity: 0.25, transparent: true})
             );
+            wirefloor.name = 'wirefloor';
             scene.add(wirefloor);
 
-            //axesHelper = new THREE.AxesHelper(1);
-            //scene.add(axesHelper);
+            axesHelper = new THREE.AxesHelper(1);
+            scene.add(axesHelper);
 
             {% for pipe in world.pipes %}
                 add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
@@ -91,9 +91,8 @@
             raycaster.setFromCamera(mouse, camera);
 
             const intersects = raycaster.intersectObjects(scene.children, true);
-            if (intersects.length > 0) {
+            if (intersects.length > 0 && intersects[0].object.name != 'wirefloor') {
                 intersects[0].object.material.color.set(red);
-                console.log(intersects[0]);
             }
 
             renderer.render(scene, camera);
@@ -146,7 +145,6 @@
         }
 
         window.addEventListener('mousemove', onMouseMove, false);
-
         init();
         animate();
     </script>
