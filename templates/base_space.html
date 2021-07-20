@@ -69,6 +69,10 @@
             axesHelper = new THREE.AxesHelper(1);
             scene.add(axesHelper);
 
+            {% for point in world.points %}
+                add_point({{ point.point }}, {{ point.color }}, {{ point.alpha }});
+            {% endfor %}
+
             {% for pipe in world.pipes %}
                 add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
             {% endfor %}
@@ -80,7 +84,23 @@
             {% for sphere in world.spheres %}
                 add_sphere({{ sphere.location }}, {{ sphere.radius }});
             {% endfor %}
+
+
+            // Add scattered background points
+            const vertices = [];
+            for (let i = 0; i < 500; i ++) {
+                const x = THREE.MathUtils.randFloatSpread(300);
+                const y = THREE.MathUtils.randFloatSpread(300);
+                const z = THREE.MathUtils.randFloatSpread(300);
+                vertices.push(x, y, z);
+            }
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            const material = new THREE.PointsMaterial({size: 0.5, color: 0x222222});
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
         };
+
 
         function animate() {
             requestAnimationFrame(animate);
@@ -104,6 +124,16 @@
             mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
         }
 
+
+        function add_point(point, color, alpha) {
+            console.log(point);
+            var geometry = new THREE.BufferGeometry();
+            //geometry.setAttribute('position', point);
+            //var material = new THREE.PointsMaterial({color: color});
+            //point = new THREE.Points(geometry, material);
+           // scene.add(point);
+            //objects.push(point);
+        };
 
         function add_pipe(points, color, radius, segments) {
             var curve_vectors = [];

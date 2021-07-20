@@ -19,6 +19,13 @@ class Entity():
 
 
 
+class Point(Entity):
+    def __init__(self, point, color='blue', alpha: float=1.0) -> None:
+        self.point = point
+        self.color = color
+        self.alpha = alpha
+
+
 class Line(Entity):
     def __init__(self, point1, point2, color='red') -> None:
         self.point1 = point1
@@ -26,12 +33,10 @@ class Line(Entity):
         self.color = color
 
 
-
 class Sphere(Entity):
     def __init__(self, location, radius: float=1.0) -> None:
         self.location = location
         self.radius = radius
-
 
 
 class Pipe(Entity):
