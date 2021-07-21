@@ -2,7 +2,7 @@
 High-level module for handling the entire 3 dimensional world/space and all created entities.
 '''
 from . import entities
-from .entities import Point, Pipe, Line, Sphere
+from .entities import Point, Line, TextPane, Pipe, Sphere
 from typing import List
 
 from flask import Flask, render_template, json, request
@@ -22,12 +22,16 @@ class World():
         return [e for e in self.entities if isinstance(e, Point)]
 
     @property
-    def pipes(self):
-        return [e for e in self.entities if isinstance(e, Pipe)]
-
-    @property
     def lines(self):
         return [e for e in self.entities if isinstance(e, Line)]
+
+    @property
+    def text_panes(self):
+        return [e for e in self.entities if isinstance(e, TextPane)]
+
+    @property
+    def pipes(self):
+        return [e for e in self.entities if isinstance(e, Pipe)]
 
     @property
     def spheres(self):

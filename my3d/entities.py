@@ -33,6 +33,25 @@ class Line(Entity):
         self.color = color
 
 
+class TextPane(Entity):
+    def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: int=3, height: int=5, rotation: float=0):
+        self.text = text
+        words = text.split(' ')
+        lines = []
+        while words:
+            new_line = ''
+            while len(new_line) < (10 * width) and words:
+                new_line += f' {words[0]}'
+                words = words[1:]
+            lines.append(new_line)
+        self.text_lines = lines
+
+        self.center_point = center_point
+        self.width = width
+        self.height = height
+        self.rotation = rotation * math.pi / 180  # given in angles; convert to radians for THREE.js
+
+
 class Sphere(Entity):
     def __init__(self, location, radius: float=1.0) -> None:
         self.location = location

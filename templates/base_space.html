@@ -73,17 +73,22 @@
                 add_point({{ point.point }}, {{ point.color }}, {{ point.alpha }});
             {% endfor %}
 
-            {% for pipe in world.pipes %}
-                add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
-            {% endfor %}
-
             {% for line in world.lines %}
                 add_line({{ line.point1 }}, {{ line.point2 }}, '{{ line.color }}')
+            {% endfor %}
+
+            {% for pane in world.text_panes %}
+                add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }});
+            {% endfor %}
+
+            {% for pipe in world.pipes %}
+                add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
             {% endfor %}
 
             {% for sphere in world.spheres %}
                 add_sphere({{ sphere.location }}, {{ sphere.radius }});
             {% endfor %}
+
 
 
             // Add scattered background points
@@ -161,6 +166,40 @@
             );
             scene.add(line);
             objects.push(line);
+        }
+
+        function add_textpane(text_lines, center_point, width, height, rotation) {
+            var canvas = document.createElement('canvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 512;
+
+            ctx.fillStyle = '#66bb8822';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#66ffbbbb';
+            ctx.lineWidth = 5;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#88ffddff';
+            ctx.font = '30px Arial';
+            for (var i=0; i < text_lines.length; i++) {
+                ctx.fillText(text_lines[i], 20, 40*(i+1));
+            }
+
+            var texture = new THREE.CanvasTexture(canvas);
+            var material_text = new THREE.MeshBasicMaterial({
+                map: texture,
+                transparent: true,
+                side: THREE.DoubleSide,
+            });
+            var textPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(width, height, 1, 1),
+                material_text
+            );
+            textPlane.rotation.x = Math.PI / 2;
+            textPlane.rotation.y = rotation;
+            textPlane.position.set(center_point[0], center_point[1], center_point[2]);
+            scene.add(textPlane);
         }
 
         function add_sphere(location, radius) {
