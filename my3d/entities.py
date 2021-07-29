@@ -8,12 +8,17 @@ import math
 class Entity():
 
     def __init__(self) -> None:
+        self.mouseover_effects = []
+        self.click_effects = []
+        self.proximity_effects = []
+
+    def add_mouseover_effect(self, effect) -> None:
+        self.mouseover_effects.append(effect)
+
+    def add_click_effect(self) -> None:
         ...
 
-    def assign_click_trigger(self) -> None:
-        ...
-
-    def assign_proximity_effect(self) -> None:
+    def add_proximity_effect(self) -> None:
         ...
 
 
@@ -21,6 +26,7 @@ class Entity():
 
 class Point(Entity):
     def __init__(self, point, color='blue', alpha: float=1.0) -> None:
+        super().__init__()
         self.point = point
         self.color = color
         self.alpha = alpha
@@ -28,6 +34,7 @@ class Point(Entity):
 
 class Line(Entity):
     def __init__(self, point1, point2, color='red') -> None:
+        super().__init__()
         self.point1 = point1
         self.point2 = point2
         self.color = color
@@ -35,6 +42,7 @@ class Line(Entity):
 
 class TextPane(Entity):
     def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: int=3, height: int=5, rotation: float=0):
+        super().__init__()
         self.text = text
         words = text.split(' ')
         lines = []
@@ -54,12 +62,14 @@ class TextPane(Entity):
 
 class Sphere(Entity):
     def __init__(self, location, radius: float=1.0) -> None:
+        super().__init__()
         self.location = location
         self.radius = radius
 
 
 class Pipe(Entity):
     def __init__(self, points: list, radius: float=1.0) -> None:
+        super().__init__()
         self.points = points
         self.radius = radius
 
@@ -74,6 +84,7 @@ class Pipe(Entity):
 
 class Cuboid(Entity):
     def __init__(self, width: float=1.0, height: float=1.0) -> None:
+        super().__init__()
         ...
 
 

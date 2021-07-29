@@ -78,7 +78,10 @@
             {% endfor %}
 
             {% for pane in world.text_panes %}
-                add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }});
+                tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }});
+                {% if pane.mouseover_effects %}
+                    tpane.mouseover_color = {{ pane.mouseover_effects[0] }};
+                {% endif %}
             {% endfor %}
 
             {% for pipe in world.pipes %}
@@ -101,8 +104,9 @@
             }
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const material = new THREE.PointsMaterial({size: 0.5, color: 0x222222});
+            const material = new THREE.PointsMaterial({size: 0.5, opacity: 0.4, transparent: true, color: 0x333333});
             const points = new THREE.Points(geometry, material);
+            points.name = 'floating_points';
             scene.add(points);
         };
 
@@ -115,9 +119,24 @@
         function render() {
             raycaster.setFromCamera(mouse, camera);
 
+            for (i=0; i < objects.length; i++) {
+                objects[i].intersected = false;
+            }
+
             const intersects = raycaster.intersectObjects(scene.children, true);
-            if (intersects.length > 0 && intersects[0].object.name != 'wirefloor') {
-                intersects[0].object.material.color.set(red);
+            if (intersects.length > 0 && intersects[0].object.name != 'wirefloor' && intersects[0].object.name != 'floating_points') {
+                intersects[0].object.intersected = true;
+                if ('mouseover_color' in intersects[0].object) {
+                    intersects[0].object.material.color.set(intersects[0].object.mouseover_color);
+                } else {
+                    intersects[0].object.material.color.set(red);
+                }
+            }
+
+            for (i=0; i < objects.length; i++) {
+                if (!objects[i].intersected) {
+                    objects[i].material.color.set(objects[i].origColor);
+                }
             }
 
             renderer.render(scene, camera);
@@ -151,6 +170,7 @@
                 new THREE.TubeGeometry(curve, segments, radius, radialSegments, false),
                 new THREE.MeshBasicMaterial({color: blue, wireframe: true})
             );
+            pipe.origColor = pipe.material.color.getHex();
             scene.add(pipe);
             objects.push(pipe);
         };
@@ -164,6 +184,7 @@
                 new THREE.BufferGeometry().setFromPoints(points),
                 new THREE.LineBasicMaterial({color: color}),
             );
+            line.origColor = line.material.color.getHex();
             scene.add(line);
             objects.push(line);
         }
@@ -192,14 +213,17 @@
                 transparent: true,
                 side: THREE.DoubleSide,
             });
-            var textPlane = new THREE.Mesh(
+            var textPane = new THREE.Mesh(
                 new THREE.PlaneGeometry(width, height, 1, 1),
                 material_text
             );
-            textPlane.rotation.x = Math.PI / 2;
-            textPlane.rotation.y = rotation;
-            textPlane.position.set(center_point[0], center_point[1], center_point[2]);
-            scene.add(textPlane);
+            textPane.rotation.x = Math.PI / 2;
+            textPane.rotation.y = rotation;
+            textPane.position.set(center_point[0], center_point[1], center_point[2]);
+            textPane.origColor = textPane.material.color.getHex();
+            scene.add(textPane);
+            objects.push(textPane);
+            return textPane;
         }
 
         function add_sphere(location, radius) {
@@ -209,6 +233,7 @@
                 new THREE.MeshBasicMaterial({color: blue, wireframe: true}),
             );
             sphere.position.set(location[0], location[1], location[2]);
+            sphere.origColor = sphere.material.color.getHex();
             scene.add(sphere);
             objects.push(sphere);
         }
