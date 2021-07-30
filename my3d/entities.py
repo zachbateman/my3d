@@ -15,8 +15,8 @@ class Entity():
     def add_mouseover_effect(self, effect) -> None:
         self.mouseover_effects.append(effect)
 
-    def add_click_effect(self) -> None:
-        ...
+    def add_click_effect(self, effect) -> None:
+        self.click_effects.append(effect)
 
     def add_proximity_effect(self) -> None:
         ...

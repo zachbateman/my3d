@@ -82,6 +82,10 @@
                 {% if pane.mouseover_effects %}
                     tpane.mouseover_color = {{ pane.mouseover_effects[0] }};
                 {% endif %}
+                {% if pane.click_effects %}
+                    tpane.click_effect = '{{ pane.click_effects[0] }}';
+                    tpane.spin_angle = 0;
+                {% endif %}
             {% endfor %}
 
             {% for pipe in world.pipes %}
@@ -116,6 +120,13 @@
             render();
         };
 
+        var clicked = false;
+        function onClick() {
+            clicked = true;
+        }
+        document.addEventListener('mousedown', onClick, false);
+
+
         function render() {
             raycaster.setFromCamera(mouse, camera);
 
@@ -125,11 +136,42 @@
 
             const intersects = raycaster.intersectObjects(scene.children, true);
             if (intersects.length > 0 && intersects[0].object.name != 'wirefloor' && intersects[0].object.name != 'floating_points') {
-                intersects[0].object.intersected = true;
-                if ('mouseover_color' in intersects[0].object) {
-                    intersects[0].object.material.color.set(intersects[0].object.mouseover_color);
+                var int_object = intersects[0].object;
+                int_object.intersected = true;
+                if ('mouseover_color' in int_object) {
+                    int_object.material.color.set(int_object.mouseover_color);
                 } else {
-                    intersects[0].object.material.color.set(red);
+                    int_object.material.color.set(red);
+                }
+
+                if ('click_effect' in int_object && clicked) {
+                    int_object.spin_angle += 1;
+                }
+            }
+
+            var spin_axis = new THREE.Vector3(0, 1, 0);
+            for (i=0; i < objects.length; i++) {
+                if ('spin_angle' in objects[i] && objects[i].spin_angle > 0) {
+                    var increment;
+                    if (objects[i].spin_angle < 30) {
+                        increment = 5;
+                    } else if (objects[i].spin_angle < 90) {
+                        increment = 8;
+                    } else if (objects[i].spin_angle < 270) {
+                        increment = 12;
+                    } else if (objects[i].spin_angle < 330) {
+                        increment = 8;
+                    } else {
+                        increment = 5;
+                    }
+
+                    if (objects[i].spin_angle + increment >= 360) {
+                        objects[i].spin_angle = 0;
+                        objects[i].rotation.y = 0;
+                    } else {
+                        objects[i].spin_angle += increment;
+                        objects[i].rotateOnAxis(spin_axis, increment * Math.PI / 180);  // objects[i].spin_angle * (Math.PI / 180));
+                    }
                 }
             }
 
@@ -139,6 +181,7 @@
                 }
             }
 
+            clicked = false;
             renderer.render(scene, camera);
         }
 

@@ -17,6 +17,7 @@ def visualize():
     world.add_entity(my3d.Sphere([5, -5, 10], radius=3))
     pane = my3d.TextPane('Text goes... HERE!  And here is additional following text...', center_point=[-8, -16, 10])
     pane.add_mouseover_effect('blue')
+    pane.add_click_effect('spin')
     world.add_entity(pane)
 
     # world.add_entity(my3d.Point([7, 7, 7]))
