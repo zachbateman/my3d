@@ -20,7 +20,7 @@ def visualize():
     pane.add_click_effect('spin')
     world.add_entity(pane)
 
-    # world.add_entity(my3d.Point([7, 7, 7]))
+    world.add_entity(my3d.Point([7, 7, 7]))
 
 
     # breakpoint()

@@ -25,11 +25,11 @@ class Entity():
 
 
 class Point(Entity):
-    def __init__(self, point, color='blue', alpha: float=1.0) -> None:
+    def __init__(self, point, color='green', opacity: float=0.7) -> None:
         super().__init__()
         self.point = point
         self.color = color
-        self.alpha = alpha
+        self.opacity = opacity
 
 
 class Line(Entity):

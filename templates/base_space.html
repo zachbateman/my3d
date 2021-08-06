@@ -54,8 +54,8 @@
             scene = new THREE.Scene();
 
             light = new THREE.DirectionalLight(0xFFFFFF, 1);
-            light.position.set(0, 10, 0);
-            light.target.position.set(-5, 0, 0);
+            light.position.set(0, 0, 1000);
+            light.target.position.set(0, 0, 0);
             scene.add(light);
             scene.add(light.target);
 
@@ -70,7 +70,7 @@
             scene.add(axesHelper);
 
             {% for point in world.points %}
-                add_point({{ point.point }}, {{ point.color }}, {{ point.alpha }});
+                add_point({{ point.point }}, {{ point.color }}, {{ point.opacity }});
             {% endfor %}
 
             {% for line in world.lines %}
@@ -192,14 +192,18 @@
         }
 
 
-        function add_point(point, color, alpha) {
-            console.log(point);
-            var geometry = new THREE.BufferGeometry();
-            //geometry.setAttribute('position', point);
-            //var material = new THREE.PointsMaterial({color: color});
-            //point = new THREE.Points(geometry, material);
-           // scene.add(point);
-            //objects.push(point);
+        function add_point(point, color, opacity) {
+            // A Point is just a small Sphere with predefined attributes (like radius)
+            var sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.5, 8, 4),
+                // new THREE.MeshBasicMaterial({color: color, wireframe: false, opacity: opacity}),
+                // MeshLambertMaterial reacts to lighting
+                new THREE.MeshLambertMaterial({color: color, wireframe: false, opacity: opacity, emissive: color, emissiveIntensity: 0.4}),
+            );
+            sphere.position.set(point[0], point[1], point[2]);
+            sphere.origColor = sphere.material.color.getHex();
+            scene.add(sphere);
+            objects.push(sphere);
         };
 
         function add_pipe(points, color, radius, segments) {
