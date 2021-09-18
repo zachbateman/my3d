@@ -25,11 +25,13 @@ class Entity():
 
 
 class Point(Entity):
-    def __init__(self, point, color='green', opacity: float=0.7) -> None:
+    def __init__(self, point, color='green', opacity: float=0.7, radius=0.5, fast=False) -> None:
         super().__init__()
         self.point = point
         self.color = color
         self.opacity = opacity
+        self.radius = radius
+        self.fast = 1 if fast else 0
 
 
 class Line(Entity):
@@ -41,7 +43,7 @@ class Line(Entity):
 
 
 class TextPane(Entity):
-    def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: int=3, height: int=5, rotation: float=0):
+    def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: float=3, height: float=5, rotation: float=0):
         super().__init__()
         self.text = text
         words = text.split(' ')
