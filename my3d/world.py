@@ -2,7 +2,7 @@
 High-level module for handling the entire 3 dimensional world/space and all created entities.
 '''
 from . import entities
-from .entities import Point, Line, TextPane, Pipe, Sphere
+from .entities import Entity, Point, Line, TextPane, Pipe, Sphere
 from typing import List
 
 from flask import Flask, render_template, json, request
@@ -14,8 +14,20 @@ def visualize(pipes=None):
 
 
 class World():
-    def __init__(self, scale: float=1.0) -> None:
+    def __init__(self, scale: float=1.0, xyz_helper: bool=False, background_particles: bool=False) -> None:
         self.entities = []
+        self.xyz_helper = xyz_helper
+        if xyz_helper:
+            panes = [
+                TextPane('X', center_point=(1, 0, 0.3), width=0.5, height=0.5),
+                TextPane('Y', center_point=(0, 1, 0.3), width=0.5, height=0.5),
+                TextPane('Z', center_point=(0, 0, 1.3), width=0.5, height=0.5),
+                ]
+            for pane in panes:
+                pane.add_click_effect('spin')
+                self.add_entity(pane)
+
+        self.background_particles = background_particles
 
     @property
     def points(self):
@@ -37,11 +49,13 @@ class World():
     def spheres(self):
         return [e for e in self.entities if isinstance(e, Sphere)]
 
-    def add_entity(self, entity):  # : entities.Entity | List[entities.Entity]) -> None:
-        if isinstance(entity, list):
-            self.entities.extend(entity)
-        else:
-            self.entities.append(entity)
+    def add_entity(self, *entities):  # : entities.Entity | Iterable[entities.Entity]) -> None:
+        for entity in entities:
+            if isinstance(entity, Entity):
+                self.entities.append(entity)
+            else:
+                for inner_entity in entity:  # if "entity" is say a list
+                    self.entities.append(inner_entity)
 
     def remove_entity(self, entity) -> None:
         ...
