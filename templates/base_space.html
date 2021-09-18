@@ -66,19 +66,21 @@
             wirefloor.name = 'wirefloor';
             scene.add(wirefloor);
 
-            axesHelper = new THREE.AxesHelper(1);
-            scene.add(axesHelper);
+            {% if world.xyz_helper %}
+                axesHelper = new THREE.AxesHelper(1);
+                scene.add(axesHelper);
+            {% endif %}
 
             {% for point in world.points %}
-                add_point({{ point.point }}, {{ point.color }}, {{ point.opacity }});
+                add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.opacity }}, {{ point.radius }}, {{ point.fast }});
             {% endfor %}
 
             {% for line in world.lines %}
-                add_line({{ line.point1 }}, {{ line.point2 }}, '{{ line.color }}')
+                add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}')
             {% endfor %}
 
             {% for pane in world.text_panes %}
-                tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }});
+                tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point | tojson }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }});
                 {% if pane.mouseover_effects %}
                     tpane.mouseover_color = {{ pane.mouseover_effects[0] }};
                 {% endif %}
@@ -89,29 +91,31 @@
             {% endfor %}
 
             {% for pipe in world.pipes %}
-                add_pipe({{ pipe.points }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
+                add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
             {% endfor %}
 
             {% for sphere in world.spheres %}
-                add_sphere({{ sphere.location }}, {{ sphere.radius }});
+                add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }});
             {% endfor %}
 
 
 
             // Add scattered background points
-            const vertices = [];
-            for (let i = 0; i < 500; i ++) {
-                const x = THREE.MathUtils.randFloatSpread(300);
-                const y = THREE.MathUtils.randFloatSpread(300);
-                const z = THREE.MathUtils.randFloatSpread(300);
-                vertices.push(x, y, z);
-            }
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            const material = new THREE.PointsMaterial({size: 0.5, opacity: 0.4, transparent: true, color: 0x333333});
-            const points = new THREE.Points(geometry, material);
-            points.name = 'floating_points';
-            scene.add(points);
+            {% if world.background_particles %}
+                const vertices = [];
+                for (let i = 0; i < 500; i ++) {
+                    const x = THREE.MathUtils.randFloatSpread(300);
+                    const y = THREE.MathUtils.randFloatSpread(300);
+                    const z = THREE.MathUtils.randFloatSpread(300);
+                    vertices.push(x, y, z);
+                }
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                const material = new THREE.PointsMaterial({size: 0.5, opacity: 0.4, transparent: true, color: 0x333333});
+                const points = new THREE.Points(geometry, material);
+                points.name = 'floating_points';
+                scene.add(points);
+            {% endif %}
         };
 
 
@@ -192,10 +196,16 @@
         }
 
 
-        function add_point(point, color, opacity) {
-            // A Point is just a small Sphere with predefined attributes (like radius)
+        function add_point(point, color, opacity, radius, fast) {
+            // A Point is just a small Sphere with predefined attributes
+             if (fast === 1) {
+                var sphere = new THREE.SphereGeometry(radius, 4, 2);
+            } else {
+                var sphere = new THREE.SphereGeometry(radius, 8, 4);
+            }
+
             var sphere = new THREE.Mesh(
-                new THREE.SphereGeometry(0.5, 8, 4),
+                sphere,
                 // new THREE.MeshBasicMaterial({color: color, wireframe: false, opacity: opacity}),
                 // MeshLambertMaterial reacts to lighting
                 new THREE.MeshLambertMaterial({color: color, wireframe: false, opacity: opacity, emissive: color, emissiveIntensity: 0.4}),
@@ -239,8 +249,8 @@
         function add_textpane(text_lines, center_point, width, height, rotation) {
             var canvas = document.createElement('canvas');
             ctx = canvas.getContext('2d');
-            canvas.width = 512;
-            canvas.height = 512;
+            canvas.width = 100 * width;
+            canvas.height = 100 * height
 
             ctx.fillStyle = '#66bb8822';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -251,7 +261,11 @@
             ctx.fillStyle = '#88ffddff';
             ctx.font = '30px Arial';
             for (var i=0; i < text_lines.length; i++) {
-                ctx.fillText(text_lines[i], 20, 40*(i+1));
+                if (width <= 1) {
+                    ctx.fillText(text_lines[i], 6, 40*(i+1)-5);
+                } else {
+                    ctx.fillText(text_lines[i], 20, 40*(i+1));
+                }
             }
 
             var texture = new THREE.CanvasTexture(canvas);

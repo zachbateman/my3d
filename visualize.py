@@ -22,8 +22,6 @@ def visualize():
 
     world.add_entity(my3d.Point([7, 7, 7]))
 
-
-    # breakpoint()
     return render_template('base_space.html', world=world)
 
 
