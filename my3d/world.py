@@ -1,20 +1,34 @@
 '''
 High-level module for handling the entire 3 dimensional world/space and all created entities.
 '''
+import os
+import webbrowser
 from . import entities
 from .entities import Entity, Point, Line, TextPane, Pipe, Sphere
 from typing import List
 
 from flask import Flask, render_template, json, request
-site = Flask(__name__)
 
+template_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'templates')
+print(template_folder)
+
+site = Flask(__name__, template_folder=template_folder)
+
+
+WORLD = None
 @site.route('/')
 def visualize(pipes=None):
-    return render_template('base_space.html', pipes=pipes)
+    return render_template('base_space.html', world=WORLD)
 
 
 class World():
-    def __init__(self, scale: float=1.0, xyz_helper: bool=False, background_particles: bool=False) -> None:
+    def __init__(self, scale: float=1.0,
+                               xyz_helper: bool=False,
+                               background_particles: bool=False,
+                               controls: str='orbit') -> None:
+        '''
+        TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
+        '''
         self.entities = []
         self.xyz_helper = xyz_helper
         if xyz_helper:
@@ -28,6 +42,7 @@ class World():
                 self.add_entity(pane)
 
         self.background_particles = background_particles
+        self.controls = controls
 
     @property
     def points(self):
@@ -78,5 +93,7 @@ class World():
         '''
         Serve the 3D visualization locally on localhost:5000 using Flask
         '''
+        global WORLD
+        WORLD = self
+        webbrowser.open('http://127.0.0.1:5000/')
         site.run(debug=True)
-
