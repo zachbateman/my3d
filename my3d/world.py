@@ -25,7 +25,9 @@ class World():
     def __init__(self, scale: float=1.0,
                                xyz_helper: bool=False,
                                background_particles: bool=False,
-                               controls: str='orbit') -> None:
+                               controls: str='orbit',
+                               total_animation_frames: int=100,
+                               animation_frame_duration: float=0.1) -> None:
         '''
         TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
         '''
@@ -43,6 +45,9 @@ class World():
 
         self.background_particles = background_particles
         self.controls = controls
+        self.total_animation_frames = total_animation_frames
+        self.animation_frame_duration = animation_frame_duration
+
 
     @property
     def points(self):

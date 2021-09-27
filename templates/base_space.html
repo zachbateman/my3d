@@ -42,6 +42,12 @@
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2(1, 1);
 
+        var CURRENT_FRAME = 1;
+        var START_TIME = Date.now();
+        var FRAME_INTERVAL = {{ world.animation_frame_duration }};
+        var current_object;
+        var change_type, change_value;
+
 
         function init() {
             renderer = new THREE.WebGLRenderer();
@@ -110,7 +116,14 @@
             {% endfor %}
 
             {% for pipe in world.pipes %}
-                add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }});
+                {% if pipe.changes %}
+                    console.log({{ pipe.changes | safe}});
+                    console.log({{ pipe.segments }});
+                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}});
+                {% endif %}
+                {% if not pipe.changes %}
+                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, '');
+                {% endif %}
             {% endfor %}
 
             {% for sphere in world.spheres %}
@@ -151,9 +164,33 @@
 
 
         function render() {
+
+            // Now handle user-specified entity changes at specific frames
+            for (var i=0; i < objects.length; i++) {
+                current_object = objects[i];
+                if (current_object.hasOwnProperty('changes')) {
+                    for (var j=0; j < current_object.changes.length; j++) {
+                        if (current_object.changes[j][0] == CURRENT_FRAME) {
+                            change_type = current_object.changes[j][1][0];
+                            change_value = current_object.changes[j][1][1];
+                            if (change_type == 'color') {
+                                current_object.material.color.set(change_value);
+                            }
+                        }
+                    }
+                }
+            }
+            if ((Date.now() - START_TIME) / 1000 > CURRENT_FRAME * FRAME_INTERVAL) {
+                CURRENT_FRAME = CURRENT_FRAME + 1;
+            }
+
+
             raycaster.setFromCamera(mouse, camera);
 
             for (var i=0; i < objects.length; i++) {
+                if (objects[i].intersected === false) {
+                    objects[i].previous_color = objects[i].material.color.getHex();
+                }
                 objects[i].intersected = false;
             }
 
@@ -161,6 +198,7 @@
             if (intersects.length > 0 && intersects[0].object.name != 'wirefloor' && intersects[0].object.name != 'floating_points') {
                 var int_object = intersects[0].object;
                 int_object.intersected = true;
+
                 if ('mouseover_color' in int_object) {
                     int_object.material.color.set(int_object.mouseover_color);
                 } else {
@@ -200,9 +238,11 @@
 
             for (i=0; i < objects.length; i++) {
                 if (!objects[i].intersected) {
-                    objects[i].material.color.set(objects[i].origColor);
+                    //objects[i].material.color.set(objects[i].origColor);
+                    objects[i].material.color.set(objects[i].previous_color);
                 }
             }
+
 
             clicked = false;
             renderer.render(scene, camera);
@@ -227,7 +267,7 @@
                 sphere,
                 // new THREE.MeshBasicMaterial({color: color, wireframe: false, opacity: opacity}),
                 // MeshLambertMaterial reacts to lighting
-                new THREE.MeshLambertMaterial({color: color, wireframe: false, opacity: opacity, emissive: color, emissiveIntensity: 0.4}),
+                new THREE.MeshLambertMaterial({color: color, wireframe: false, opacity: opacity, emissive: color, emissiveIntensity: 0.4})
             );
             sphere.position.set(point[0], point[1], point[2]);
             sphere.origColor = sphere.material.color.getHex();
@@ -235,7 +275,12 @@
             objects.push(sphere);
         };
 
-        function add_pipe(points, color, radius, segments) {
+        function add_pipe(points, color, radius, segments, changes) {
+            console.log(points);
+            console.log(color);
+            console.log(radius);
+            console.log(segments);
+            console.log(changes);
             var curve_vectors = [];
             for (var i=0; i < points.length; i++) {
                 curve_vectors.push(new THREE.Vector3(points[i][0], points[i][1], points[i][2]).multiplyScalar(scale));
@@ -247,6 +292,11 @@
                 new THREE.MeshBasicMaterial({color: blue, wireframe: true})
             );
             pipe.origColor = pipe.material.color.getHex();
+            if (changes != '') {
+                pipe.changes = changes;
+            } else {
+                pipe.changes = [];
+            }
             scene.add(pipe);
             objects.push(pipe);
         };

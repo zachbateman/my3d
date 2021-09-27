@@ -11,6 +11,7 @@ class Entity():
         self.mouseover_effects = []
         self.click_effects = []
         self.proximity_effects = []
+        self.changes = []  # [(frame, change), (frame, change), ...]
 
     def add_mouseover_effect(self, effect) -> None:
         self.mouseover_effects.append(effect)
@@ -20,6 +21,16 @@ class Entity():
 
     def add_proximity_effect(self) -> None:
         ...
+
+    def change_color(self, change_frame: int, new_color: str):
+        self.changes.append((change_frame, ('color', new_color)))
+
+    def change_visibility(self, change_frame: int, visible: bool):
+        self.changes.append((change_frame, ('visibility', visible)))
+
+    def change_position(self, change_frame: int, new_position):
+        self.changes.append((change_frame, ('position', new_position)))
+
 
 
 
@@ -74,14 +85,17 @@ class Pipe(Entity):
         super().__init__()
         self.points = points
         self.radius = radius
+        self.segments = int(5 + self.end_to_end_length / 5)
 
     @property
     def end_to_end_length(self):
-        return math.dist(self.points[0], self.points[-1])
+        # return math.dist(self.points[0], self.points[-1])  # Python 3.8+...
+        p1, p2 = self.points[0], self.points[-1]
+        return ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**0.5
 
-    @property
-    def segments(self):
-        return int(5 + self.end_to_end_length / 5)
+    # @property
+    # def segments(self):
+        # return int(5 + self.end_to_end_length / 5)
 
 
 class Cuboid(Entity):
