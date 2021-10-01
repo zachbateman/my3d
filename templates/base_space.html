@@ -63,7 +63,7 @@
                 controls = new THREE.OrbitControls(camera, renderer.domElement);
                 controls.target.set(0, 0, 0);
                 controls.enableDamping = true;
-                controls.dampingFactor = 0.15;
+                controls.dampingFactor = 0.10;
                 controls.autoRotate = true;
                 controls.autoRotateSpeed = -0.5;
                 container.addEventListener('mousedown', function () {controls.autoRotate=false});  // stop rotation when user clicks
@@ -178,6 +178,8 @@
                             change_value = current_object.changes[j][1][1];
                             if (change_type == 'color') {
                                 current_object.material.color.set(change_value);
+                            } else if (change_type == 'visibility') {
+                                current_object.material.visible = change_value;
                             }
                         }
                     }

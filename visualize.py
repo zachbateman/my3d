@@ -15,8 +15,12 @@ def visualize():
     pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3)
     pipe3 = my3d.Pipe(points=[[-20, -3, -132], [-8, 32, 21]], radius=10)
 
-    pipe3.change_color(20, 'orange')
+    pipe3.change_visibility(8, False)
+    pipe3.change_visibility(20, True)
+    pipe3.change_color(30, 'orange')
     pipe3.change_color(50, 'white')
+    pipe3.change_visibility(55, False)
+    pipe3.change_visibility(70, True)
 
     pipe4 = my3d.Pipe(points=[(10, 3, 7), (18, 2, 10)], radius=0.3)
 
