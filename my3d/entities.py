@@ -98,6 +98,18 @@ class Pipe(Entity):
         # return int(5 + self.end_to_end_length / 5)
 
 
+class Plane(Entity):
+    # need 3 points to define a plane in 3D...
+    # need to specify length and width...
+    def __init__(self, points, length=20, width=10, color='blue'):
+        # points is to be a sequence of 3 separate (x, y, z) points
+        # these three points define a plane
+        self.points = points
+        self.length = length
+        self.width = width
+        self.color = color
+
+
 class Cuboid(Entity):
     def __init__(self, width: float=1.0, height: float=1.0) -> None:
         super().__init__()

@@ -85,8 +85,9 @@
             scene.add(light.target);
 
             wirefloor = new THREE.Mesh(
-                new THREE.PlaneGeometry(300, 300, 100, 100),
-                new THREE.MeshBasicMaterial({color: 0x334455, wireframe: true, opacity: 0.25, transparent: true})
+                // new THREE.PlaneGeometry(300, 300, 100, 100),
+                new THREE.PlaneGeometry({{ world.floor_size }}, {{ world.floor_size }}, {{ world.floor_size }} / 3, {{ world.floor_size }} / 3),
+                new THREE.MeshBasicMaterial({color: 0x334455, wireframe: true, opacity: {{ world.floor_opacity }}, transparent: true})
             );
             wirefloor.name = 'wirefloor';
             scene.add(wirefloor);
@@ -117,8 +118,6 @@
 
             {% for pipe in world.pipes %}
                 {% if pipe.changes %}
-                    console.log({{ pipe.changes | safe}});
-                    console.log({{ pipe.segments }});
                     add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}});
                 {% endif %}
                 {% if not pipe.changes %}
@@ -128,6 +127,10 @@
 
             {% for sphere in world.spheres %}
                 add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }});
+            {% endfor %}
+
+            {% for plane in world.planes %}
+                add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }});
             {% endfor %}
 
 
@@ -276,17 +279,15 @@
         };
 
         function add_pipe(points, color, radius, segments, changes) {
-            console.log(points);
-            console.log(color);
-            console.log(radius);
-            console.log(segments);
-            console.log(changes);
             var curve_vectors = [];
             for (var i=0; i < points.length; i++) {
                 curve_vectors.push(new THREE.Vector3(points[i][0], points[i][1], points[i][2]).multiplyScalar(scale));
             }
             curve = new THREE.CatmullRomCurve3(curve_vectors);
             var radialSegments = Math.floor(8 + 5.2 * Math.log(radius));
+            if (radialSegments < 6) {
+                radialSegments = 6;
+            }
             pipe = new THREE.Mesh(
                 new THREE.TubeGeometry(curve, segments, radius, radialSegments, false),
                 new THREE.MeshBasicMaterial({color: blue, wireframe: true})
@@ -366,6 +367,16 @@
             sphere.origColor = sphere.material.color.getHex();
             scene.add(sphere);
             objects.push(sphere);
+        }
+
+        function add_plane(length, width, color) {
+            wirePlane = new THREE.Mesh(
+                // new THREE.PlaneGeometry(300, 300, 100, 100),
+                new THREE.PlaneGeometry(length, width, length / 3, width / 3),
+                new THREE.MeshBasicMaterial({color: color, wireframe: true, opacity: 0.7, transparent: true})
+            );
+            scene.add(wirePlane);
+            objects.push(wirePlane);
         }
 
         window.addEventListener('mousemove', onMouseMove, false);

@@ -4,7 +4,7 @@ High-level module for handling the entire 3 dimensional world/space and all crea
 import os
 import webbrowser
 from . import entities
-from .entities import Entity, Point, Line, TextPane, Pipe, Sphere
+from .entities import Entity, Point, Line, TextPane, Pipe, Sphere, Plane
 from typing import List
 
 from flask import Flask, render_template, json, request
@@ -27,7 +27,9 @@ class World():
                                background_particles: bool=False,
                                controls: str='orbit',
                                total_animation_frames: int=100,
-                               animation_frame_duration: float=0.1) -> None:
+                               animation_frame_duration: float=0.1,
+                               floor_size: int=300,
+                               floor_opacity: float=0.25) -> None:
         '''
         TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
         '''
@@ -47,6 +49,8 @@ class World():
         self.controls = controls
         self.total_animation_frames = total_animation_frames
         self.animation_frame_duration = animation_frame_duration
+        self.floor_size = floor_size
+        self.floor_opacity = floor_opacity
 
 
     @property
@@ -68,6 +72,10 @@ class World():
     @property
     def spheres(self):
         return [e for e in self.entities if isinstance(e, Sphere)]
+
+    @property
+    def planes(self):
+        return [e for e in self.entities if isinstance(e, Plane)]
 
     def add_entity(self, *entities):  # : entities.Entity | Iterable[entities.Entity]) -> None:
         for entity in entities:
