@@ -42,6 +42,11 @@ def visualize():
 
 
     plane = my3d.Plane(points=[(), (), ()], length=30, width=10)
+    plane.change_rotationX(30, 45)
+    plane.change_rotationY(60, 30)
+    plane.change_rotationY(70, 30)
+    for i in range(30):
+        plane.change_rotationZ(80+i, 1)
     world.add_entity(plane)
 
     return render_template('base_space.html', world=world)

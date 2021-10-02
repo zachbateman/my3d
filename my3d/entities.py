@@ -31,6 +31,15 @@ class Entity():
     def change_position(self, change_frame: int, new_position):
         self.changes.append((change_frame, ('position', new_position)))
 
+    def change_rotationX(self, change_frame: int, degrees: float):
+        self.changes.append((change_frame, ('rotateX', math.radians(degrees))))
+
+    def change_rotationY(self, change_frame: int, degrees: float):
+        self.changes.append((change_frame, ('rotateY', math.radians(degrees))))
+
+    def change_rotationZ(self, change_frame: int, degrees: float):
+        self.changes.append((change_frame, ('rotateZ', math.radians(degrees))))
+
 
 
 
@@ -102,6 +111,7 @@ class Plane(Entity):
     # need 3 points to define a plane in 3D...
     # need to specify length and width...
     def __init__(self, points, length=20, width=10, color='blue'):
+        super().__init__()
         # points is to be a sequence of 3 separate (x, y, z) points
         # these three points define a plane
         self.points = points

@@ -130,7 +130,12 @@
             {% endfor %}
 
             {% for plane in world.planes %}
-                add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }});
+                {% if plane.changes %}
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, {{ plane.changes | tojson }});
+                {% endif %}
+                {% if not plane.changes %}
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, '');
+                {% endif %}
             {% endfor %}
 
 
@@ -180,6 +185,12 @@
                                 current_object.material.color.set(change_value);
                             } else if (change_type == 'visibility') {
                                 current_object.material.visible = change_value;
+                            } else if (change_type == 'rotateX') {
+                                current_object.rotateX(change_value);
+                            } else if (change_type == 'rotateY') {
+                                current_object.rotateY(change_value);
+                            } else if (change_type == 'rotateZ') {
+                                current_object.rotateZ(change_value);
                             }
                         }
                     }
@@ -371,12 +382,17 @@
             objects.push(sphere);
         }
 
-        function add_plane(length, width, color) {
+        function add_plane(length, width, color, changes) {
             wirePlane = new THREE.Mesh(
                 // new THREE.PlaneGeometry(300, 300, 100, 100),
                 new THREE.PlaneGeometry(length, width, length / 3, width / 3),
                 new THREE.MeshBasicMaterial({color: color, wireframe: true, opacity: 0.7, transparent: true})
             );
+            if (changes != '') {
+                wirePlane.changes = changes;
+            } else {
+                wirePlane.changes = [];
+            }
             scene.add(wirePlane);
             objects.push(wirePlane);
         }
