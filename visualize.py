@@ -12,9 +12,11 @@ def visualize():
                                floor_opacity=0.15)
 
     pipe1 = my3d.Pipe(points=[[0, 0, 5], [5, 20, 20]])
-    pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3)
-    pipe3 = my3d.Pipe(points=[[-20, -3, -132], [-8, 32, 21]], radius=10)
+    pipe1.note = 'Pipe1\n(Radius=default)'
 
+    pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3)
+
+    pipe3 = my3d.Pipe(points=[[-20, -3, -132], [-8, 32, 21]], radius=10)
     pipe3.change_visibility(8, False)
     pipe3.change_visibility(20, True)
     pipe3.change_color(30, 'orange')

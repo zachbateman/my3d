@@ -12,6 +12,8 @@ class Entity():
         self.click_effects = []
         self.proximity_effects = []
         self.changes = []  # [(frame, change), (frame, change), ...]
+        self.note = ''
+
 
     def add_mouseover_effect(self, effect) -> None:
         self.mouseover_effects.append(effect)

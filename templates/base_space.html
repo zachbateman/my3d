@@ -13,7 +13,8 @@
     </head>
 
     <body style="margin: 0;">
-        <div id="space" z-index=-1 style="width: 100%; height: 100vh; min-height: 600px; margin: 0 auto; text-align: center;"></div>
+        <div id="space" z-index=1 style="width: 100%; height: 100vh; min-height: 600px; margin: 0 auto; text-align: center;"></div>
+        <div id="notes_overlay" z-index=10 style="color: #63fb63; position: absolute; top: 15px; left: 30px; white-space: pre-wrap;"></div>
     </body>
 
     <script type="text/javascript">
@@ -31,6 +32,7 @@
         var blue = 0x2277cc;
         var green = 0x22cc77;
         var red = 0x772211;
+        var intersect_color = 0x55dd88;
 
         var objects = [];  // for containing all the 3D user-generated objects
         var tpane, curve, pipe;
@@ -99,28 +101,28 @@
 
             {% for point in world.points %}
                 {% if point.changes %}
-                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.opacity }}, {{ point.radius }}, {{ point.fast }}, {{ point.changes | tojson}});
+                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.opacity }}, {{ point.radius }}, {{ point.fast }}, {{ point.changes | tojson}}, {{ point.note | tojson}});
                 {% endif %}
                 {% if not point.changes %}
-                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.opacity }}, {{ point.radius }}, {{ point.fast }}, '');
+                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.opacity }}, {{ point.radius }}, {{ point.fast }}, '', {{ point.note | tojson }});
                 {% endif %}
             {% endfor %}
 
             {% for line in world.lines %}
                 {% if line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.changes | tojson }})
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.changes | tojson }}, {{ line.note | tojson }})
                 {% endif %}
                 {% if not line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', '')
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', '', {{ line.note | tojson }})
                 {% endif %}
             {% endfor %}
 
             {% for pane in world.text_panes %}
                 {% if pane.changes %}
-                    tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point | tojson }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }}, {{ pane.changes | tojson }});
+                    tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point | tojson }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }}, {{ pane.changes | tojson }}, {{ pane.note | tojson }});
                 {% endif %}
                 {% if not pane.changes %}
-                    tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point | tojson }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }}, '');
+                    tpane = add_textpane({{ pane.text_lines | safe }}, {{ pane.center_point | tojson }}, {{ pane.width }}, {{ pane.height }}, {{ pane.rotation }}, '', {{ pane.note | tojson }});
                 {% endif %}
                 {% if pane.mouseover_effects %}
                     tpane.mouseover_color = {{ pane.mouseover_effects[0] }};
@@ -133,28 +135,28 @@
 
             {% for pipe in world.pipes %}
                 {% if pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}});
+                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}}, {{ pipe.note | tojson }});
                 {% endif %}
                 {% if not pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, '');
+                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, '', {{ pipe.note | tojson }});
                 {% endif %}
             {% endfor %}
 
             {% for sphere in world.spheres %}
                 {% if sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.changes | tojson }});
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.changes | tojson }}, {{ sphere.note | tojson }});
                 {% endif %}
                 {% if not sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, '');
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, '', {{sphere.note | tojson }});
                 {% endif %}
             {% endfor %}
 
             {% for plane in world.planes %}
                 {% if plane.changes %}
-                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, {{ plane.changes | tojson }});
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, {{ plane.changes | tojson }}, {{ plane.note | tojson }});
                 {% endif %}
                 {% if not plane.changes %}
-                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, '');
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, '', {{ plane.note | tojson }});
                 {% endif %}
             {% endfor %}
 
@@ -238,8 +240,10 @@
                 if ('mouseover_color' in int_object) {
                     int_object.material.color.set(int_object.mouseover_color);
                 } else {
-                    int_object.material.color.set(red);
+                    int_object.material.color.set(intersect_color);
                 }
+
+                $('#notes_overlay').text(int_object.note);
 
                 if ('click_effect' in int_object && clicked) {
                     int_object.spin_angle += 1;
@@ -291,7 +295,7 @@
         }
 
 
-        function add_point(point, color, opacity, radius, fast, changes) {
+        function add_point(point, color, opacity, radius, fast, changes, note) {
             // A Point is just a small Sphere with predefined attributes
              if (fast === 1) {
                 var sphere = new THREE.SphereGeometry(radius, 4, 2);
@@ -310,13 +314,14 @@
             } else {
                 sphere.changes = [];
             }
+            sphere.note = note;
             sphere.position.set(point[0], point[1], point[2]);
             sphere.origColor = sphere.material.color.getHex();
             scene.add(sphere);
             objects.push(sphere);
         };
 
-        function add_pipe(points, color, radius, segments, changes) {
+        function add_pipe(points, color, radius, segments, changes, note) {
             var curve_vectors = [];
             for (var i=0; i < points.length; i++) {
                 curve_vectors.push(new THREE.Vector3(points[i][0], points[i][1], points[i][2]).multiplyScalar(scale));
@@ -336,11 +341,12 @@
             } else {
                 pipe.changes = [];
             }
+            pipe.note = note;
             scene.add(pipe);
             objects.push(pipe);
         };
 
-        function add_line(point_1, point_2, color, changes) {
+        function add_line(point_1, point_2, color, changes, note) {
             var points = [
                 new THREE.Vector3(point_1[0], point_1[1], point_1[2]).multiplyScalar(scale),
                 new THREE.Vector3(point_2[0], point_2[1], point_2[2]).multiplyScalar(scale),
@@ -354,12 +360,13 @@
             } else {
                 line.changes = [];
             }
+            line.note = note;
             line.origColor = line.material.color.getHex();
             scene.add(line);
             objects.push(line);
         }
 
-        function add_textpane(text_lines, center_point, width, height, rotation, changes) {
+        function add_textpane(text_lines, center_point, width, height, rotation, changes, note) {
             var canvas = document.createElement('canvas');
             ctx = canvas.getContext('2d');
             canvas.width = 100 * width;
@@ -396,6 +403,7 @@
             } else {
                 textPane.changes = [];
             }
+            textPane.note = note;
             textPane.rotation.x = Math.PI / 2;
             textPane.rotation.y = rotation;
             textPane.position.set(center_point[0], center_point[1], center_point[2]);
@@ -405,7 +413,7 @@
             return textPane;
         }
 
-        function add_sphere(location, radius, changes) {
+        function add_sphere(location, radius, changes, note) {
             var segments = Math.floor(8 + 5 * Math.log(radius));
             var sphere = new THREE.Mesh(
                 new THREE.SphereGeometry(radius, segments, segments),
@@ -416,23 +424,25 @@
             } else {
                 sphere.changes = [];
             }
+            sphere.note = note;
             sphere.position.set(location[0], location[1], location[2]);
             sphere.origColor = sphere.material.color.getHex();
             scene.add(sphere);
             objects.push(sphere);
         }
 
-        function add_plane(length, width, color, changes) {
+        function add_plane(length, width, color, changes, note) {
             wirePlane = new THREE.Mesh(
                 // new THREE.PlaneGeometry(300, 300, 100, 100),
                 new THREE.PlaneGeometry(length, width, length / 3, width / 3),
-                new THREE.MeshBasicMaterial({color: color, wireframe: true, opacity: 0.7, transparent: true})
+                new THREE.MeshBasicMaterial({color: color, wireframe: true, opacity: 0.7, transparent: true, side: THREE.DoubleSide})
             );
             if (changes != '') {
                 wirePlane.changes = changes;
             } else {
                 wirePlane.changes = [];
             }
+            wirePlane.note = note;
             scene.add(wirePlane);
             objects.push(wirePlane);
         }
