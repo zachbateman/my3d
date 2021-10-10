@@ -47,11 +47,10 @@ class Entity():
 
 
 class Point(Entity):
-    def __init__(self, point, color='green', opacity: float=0.7, radius=0.5, fast=False) -> None:
+    def __init__(self, point, color='green', radius=0.5, fast=False) -> None:
         super().__init__()
         self.point = point
         self.color = color
-        self.opacity = opacity
         self.radius = radius
         self.fast = 1 if fast else 0
 

@@ -40,7 +40,7 @@ def visualize():
     for x in range(-20, 20, 2):
         for y in range(-20, 20, 2):
             for z in range(0, 6, 2):
-                world.add_entity(my3d.Point((x, y, z), radius=0.1, opacity=0.2, fast=True))
+                world.add_entity(my3d.Point((x, y, z), radius=0.1, fast=True))
 
 
     plane = my3d.Plane(points=[(), (), ()], length=30, width=10)
