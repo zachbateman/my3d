@@ -203,6 +203,7 @@
                             change_value = current_object.changes[j][1][1];
                             if (change_type == 'color') {
                                 current_object.material.color.set(change_value);
+                                try {current_object.material.emissive.set(change_value);} catch (e) {}
                                 current_object.current_color = change_value;
                             } else if (change_type == 'visibility') {
                                 current_object.material.visible = change_value;
@@ -227,6 +228,7 @@
             for (i = intersected_objects.length - 1; i >= 0; i--) {
                 int_object = intersected_objects[i]
                 int_object.material.color.set(int_object.current_color);
+                try {int_object.material.emissive.set(int_object.current_color);} catch (e) {}
                 intersected_objects.splice(i, 1);
             }
             const intersects = raycaster.intersectObjects(scene.children, true);
@@ -236,8 +238,10 @@
 
                 if ('mouseover_color' in int_object) {
                     int_object.material.color.set(int_object.mouseover_color);
+                    try {int_object.material.emissive.set(int_object.mouseover_color);} catch (e) {}
                 } else {
                     int_object.material.color.set(intersect_color);
+                    try {int_object.material.emissive.set(intersect_color);} catch (e) {}
                 }
 
                 $('#notes_overlay').text(int_object.note);
@@ -295,7 +299,13 @@
 
             var sphere = new THREE.Mesh(
                 sphere,
-                new THREE.MeshLambertMaterial({color: color, wireframe: false, emissive: color, emissiveIntensity: 0.4})  // MeshLambertMaterial reacts to lighting
+                new THREE.MeshLambertMaterial({
+                    wireframe: false,
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 0.4,
+                    side: THREE.DoubleSide
+                })  // MeshLambertMaterial reacts to lighting
             );
             if (changes != '') {
                 sphere.changes = changes;
