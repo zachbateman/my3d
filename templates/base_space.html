@@ -15,13 +15,18 @@
     <body style="margin: 0;">
         <div id="space" z-index=1 style="width: 100%; height: 100vh; min-height: 600px; margin: 0 auto; text-align: center;"></div>
         <div id="notes_overlay" z-index=10 style="color: #63fb63; position: absolute; top: 15px; left: 30px; white-space: pre-wrap;"></div>
+        <div id="title_overlay" z-index=10 style="font-size: 150%; color: #63fb63; position: absolute; top: 15px; left: 50%; white-space: pre-wrap;"></div>
+        <div id="frame_overlay" z-index=10 style="color: #63fb63; position: absolute; top: 15px; right: 40px; white-space: pre-wrap;"></div>
     </body>
 
     <script type="text/javascript">
     //<script type="module">
-
         //import * as THREE from "/static/three.module.js";
         //import { FirstPersonControls } from "/static/FirstPersonControls.js";
+
+
+        $('#title_overlay').text('{{ world.title}}');
+
 
         var container = document.getElementById("space");
         var camera, scene, renderer, controls, light;
@@ -51,6 +56,11 @@
         var FRAME_INTERVAL = {{ world.animation_frame_duration }};
         var current_object;
         var change_type, change_value;
+        var frame_overlays = [];
+
+        {% for fr_overlay in world.frame_labels %}
+            frame_overlays.push('{{fr_overlay}}');
+        {% endfor %}
 
 
         function init() {
@@ -221,6 +231,7 @@
             if ((Date.now() - START_TIME) / 1000 > CURRENT_FRAME * FRAME_INTERVAL) {
                 CURRENT_FRAME = CURRENT_FRAME + 1;
             }
+            $('#frame_overlay').text(frame_overlays[CURRENT_FRAME]);
 
             raycaster.setFromCamera(mouse, camera);
 

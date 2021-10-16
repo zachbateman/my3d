@@ -6,8 +6,10 @@ import my3d
 
 @site.route('/')
 def visualize():
-    world = my3d.World(controls='orbit',
+    world = my3d.World(title='Visualization',
+                               controls='orbit',
                                animation_frame_duration=0.1,
+                               frame_labels = [f'Frame: {x}' for x in range(100)],
                                floor_size=150,
                                floor_opacity=0.15)
 

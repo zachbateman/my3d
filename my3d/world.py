@@ -22,17 +22,21 @@ def visualize(pipes=None):
 
 
 class World():
-    def __init__(self, scale: float=1.0,
-                               xyz_helper: bool=False,
-                               background_particles: bool=False,
-                               controls: str='orbit',
-                               total_animation_frames: int=100,
-                               animation_frame_duration: float=0.1,
-                               floor_size: int=300,
-                               floor_opacity: float=0.25) -> None:
+    def __init__(self,
+        title: str='My3D',
+        scale: float=1.0,
+        xyz_helper: bool=False,
+        background_particles: bool=False,
+        controls: str='orbit',
+        total_animation_frames: int=100,
+        animation_frame_duration: float=0.1,
+        frame_labels: list=[],
+        floor_size: int=300,
+        floor_opacity: float=0.25) -> None:
         '''
         TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
         '''
+        self.title = title
         self.entities = []
         self.xyz_helper = xyz_helper
         if xyz_helper:
@@ -49,6 +53,7 @@ class World():
         self.controls = controls
         self.total_animation_frames = total_animation_frames
         self.animation_frame_duration = animation_frame_duration
+        self.frame_labels = frame_labels  # display in top right corner; index of list = frame number
         self.floor_size = floor_size
         self.floor_opacity = floor_opacity
 
