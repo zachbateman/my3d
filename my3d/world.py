@@ -32,7 +32,8 @@ class World():
         animation_frame_duration: float=0.1,
         frame_labels: list=[],
         floor_size: int=300,
-        floor_opacity: float=0.25) -> None:
+        floor_opacity: float=0.25,
+        camera_position: tuple=(0, -30, 12)) -> None:
         '''
         TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
         '''
@@ -56,6 +57,7 @@ class World():
         self.frame_labels = frame_labels  # display in top right corner; index of list = frame number
         self.floor_size = floor_size
         self.floor_opacity = floor_opacity
+        self.camera_x, self.camera_y, self.camera_z = camera_position
 
 
     @property

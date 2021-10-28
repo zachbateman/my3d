@@ -25,22 +25,22 @@ class Entity():
         ...
 
     def change_color(self, change_frame: int, new_color: str):
-        self.changes.append((change_frame, ('color', new_color)))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('color', new_color)))
 
     def change_visibility(self, change_frame: int, visible: bool):
-        self.changes.append((change_frame, ('visibility', visible)))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('visibility', visible)))
 
     def change_position(self, change_frame: int, new_position):
-        self.changes.append((change_frame, ('position', new_position)))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('position', new_position)))
 
     def change_rotationX(self, change_frame: int, degrees: float):
-        self.changes.append((change_frame, ('rotateX', math.radians(degrees))))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('rotateX', math.radians(degrees))))
 
     def change_rotationY(self, change_frame: int, degrees: float):
-        self.changes.append((change_frame, ('rotateY', math.radians(degrees))))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('rotateY', math.radians(degrees))))
 
     def change_rotationZ(self, change_frame: int, degrees: float):
-        self.changes.append((change_frame, ('rotateZ', math.radians(degrees))))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('rotateZ', math.radians(degrees))))
 
 
 
@@ -64,7 +64,7 @@ class Line(Entity):
 
 
 class TextPane(Entity):
-    def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: float=3, height: float=5, rotation: float=0):
+    def __init__(self, text: str='TextPane', center_point=(0, 0, 0), width: float=3, height: float=5, rotation: float=0, font_size=30):
         super().__init__()
         self.text = text
         words = text.split(' ')
@@ -81,6 +81,7 @@ class TextPane(Entity):
         self.width = width
         self.height = height
         self.rotation = rotation * math.pi / 180  # given in angles; convert to radians for THREE.js
+        self.font_size = font_size
 
 
 class Sphere(Entity):
