@@ -147,10 +147,10 @@
 
             {% for pipe in world.pipes %}
                 {% if pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}}, {{ pipe.note | tojson }});
+                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}}, {{ pipe.note | tojson }});
                 {% endif %}
                 {% if not pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, 'blue', {{ pipe.radius }}, {{ pipe.segments }}, '', {{ pipe.note | tojson }});
+                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.radius }}, {{ pipe.segments }}, '', {{ pipe.note | tojson }});
                 {% endif %}
             {% endfor %}
 
@@ -345,7 +345,7 @@
             }
             pipe = new THREE.Mesh(
                 new THREE.TubeGeometry(curve, segments, radius, radialSegments, false),
-                new THREE.MeshBasicMaterial({color: blue, wireframe: true})
+                new THREE.MeshBasicMaterial({color: color, wireframe: true})
             );
             if (changes != '') {
                 pipe.changes = changes;

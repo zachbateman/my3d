@@ -92,10 +92,11 @@ class Sphere(Entity):
 
 
 class Pipe(Entity):
-    def __init__(self, points: list, radius: float=1.0) -> None:
+    def __init__(self, points: list, radius: float=1.0, color='blue') -> None:
         super().__init__()
         self.points = points
         self.radius = radius
+        self.color = color
         self.segments = int(5 + self.end_to_end_length / 5)
 
     @property
