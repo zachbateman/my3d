@@ -228,6 +228,7 @@
             if ((Date.now() - START_TIME) / 1000 > CURRENT_FRAME * FRAME_INTERVAL) {
                 CURRENT_FRAME = CURRENT_FRAME + 1;
             }
+            {% if world.loop_animation %}if (CURRENT_FRAME > frame_overlays.length) {CURRENT_FRAME = 0; START_TIME=Date.now();}{% endif %}
             $('#frame_overlay').text(frame_overlays[CURRENT_FRAME]);
 
             raycaster.setFromCamera(mouse, camera);

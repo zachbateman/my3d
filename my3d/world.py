@@ -30,6 +30,7 @@ class World():
         controls: str='orbit',
         total_animation_frames: int=100,
         animation_frame_duration: float=0.1,
+        loop_animation: bool=True,
         frame_labels: list=[],
         floor_size: int=300,
         floor_opacity: float=0.25,
@@ -54,6 +55,7 @@ class World():
         self.controls = controls
         self.total_animation_frames = total_animation_frames
         self.animation_frame_duration = animation_frame_duration
+        self.loop_animation = loop_animation
         self.frame_labels = frame_labels  # display in top right corner; index of list = frame number
         self.floor_size = floor_size
         self.floor_opacity = floor_opacity
