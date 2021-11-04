@@ -122,10 +122,10 @@
 
             {% for line in world.lines %}
                 {% if line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.changes | tojson }}, {{ line.note | tojson }})
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.opacity }}, {{ line.changes | tojson }}, {{ line.note | tojson }})
                 {% endif %}
                 {% if not line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', '', {{ line.note | tojson }})
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.opacity }}, '', {{ line.note | tojson }})
                 {% endif %}
             {% endfor %}
 
@@ -147,19 +147,19 @@
 
             {% for pipe in world.pipes %}
                 {% if pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}}, {{ pipe.note | tojson }});
+                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.opacity }}, {{ pipe.radius }}, {{ pipe.segments }}, {{ pipe.changes | tojson}}, {{ pipe.note | tojson }});
                 {% endif %}
                 {% if not pipe.changes %}
-                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.radius }}, {{ pipe.segments }}, '', {{ pipe.note | tojson }});
+                    add_pipe({{ pipe.points | tojson }}, {{ pipe.color | tojson }}, {{ pipe.opacity }}, {{ pipe.radius }}, {{ pipe.segments }}, '', {{ pipe.note | tojson }});
                 {% endif %}
             {% endfor %}
 
             {% for sphere in world.spheres %}
                 {% if sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.changes | tojson }}, {{ sphere.note | tojson }});
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color }}, {{ sphere.opacity }}, {{ sphere.changes | tojson }}, {{ sphere.note | tojson }});
                 {% endif %}
                 {% if not sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, '', {{sphere.note | tojson }});
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color }}, {{ sphere.opacity }}, '', {{sphere.note | tojson }});
                 {% endif %}
             {% endfor %}
 
@@ -333,7 +333,7 @@
             objects.push(sphere);
         };
 
-        function add_pipe(points, color, radius, segments, changes, note) {
+        function add_pipe(points, color, opacity, radius, segments, changes, note) {
             var curve_vectors = [];
             for (var i=0; i < points.length; i++) {
                 curve_vectors.push(new THREE.Vector3(points[i][0], points[i][1], points[i][2]).multiplyScalar(scale));
@@ -345,7 +345,7 @@
             }
             pipe = new THREE.Mesh(
                 new THREE.TubeGeometry(curve, segments, radius, radialSegments, false),
-                new THREE.MeshBasicMaterial({color: color, wireframe: true})
+                new THREE.MeshBasicMaterial({color: color, opacity: opacity, transparent: true, wireframe: true})
             );
             if (changes != '') {
                 pipe.changes = changes;
@@ -358,14 +358,14 @@
             objects.push(pipe);
         };
 
-        function add_line(point_1, point_2, color, changes, note) {
+        function add_line(point_1, point_2, color, opacity, changes, note) {
             var points = [
                 new THREE.Vector3(point_1[0], point_1[1], point_1[2]).multiplyScalar(scale),
                 new THREE.Vector3(point_2[0], point_2[1], point_2[2]).multiplyScalar(scale),
             ];
             var line = new THREE.Line(
                 new THREE.BufferGeometry().setFromPoints(points),
-                new THREE.LineBasicMaterial({color: color}),
+                new THREE.LineBasicMaterial({color: color, opacity: opacity, transparent: true}),
             );
             if (changes != '') {
                 line.changes = changes;
@@ -426,11 +426,11 @@
             return textPane;
         }
 
-        function add_sphere(location, radius, changes, note) {
+        function add_sphere(location, radius, color, opacity, changes, note) {
             var segments = Math.floor(8 + 5 * Math.log(radius));
             var sphere = new THREE.Mesh(
                 new THREE.SphereGeometry(radius, segments, segments),
-                new THREE.MeshBasicMaterial({color: blue, wireframe: true}),
+                new THREE.MeshBasicMaterial({color: color, opacity: opacity, transparent: true, wireframe: true}),
             );
             if (changes != '') {
                 sphere.changes = changes;

@@ -16,7 +16,7 @@ def visualize():
     pipe1 = my3d.Pipe(points=[[0, 0, 5], [5, 20, 20]])
     pipe1.note = 'Pipe1\n(Radius=default)'
 
-    pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3, color='red')
+    pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3, color='red', opacity=0.3)
 
     pipe3 = my3d.Pipe(points=[[-20, -3, -132], [-8, 32, 21]], radius=10)
     pipe3.change_visibility(8, False)
@@ -30,7 +30,8 @@ def visualize():
 
     world.add_entity([pipe1, pipe2, pipe3, pipe4])
     world.add_entity(my3d.Line([0, 0, 0], [10, 8, 6]))
-    world.add_entity(my3d.Sphere([5, -5, 10], radius=1))
+    world.add_entity(my3d.Line([0, 0, 0], [12, 10, 8], color='red', opacity=0.7))
+    world.add_entity(my3d.Sphere([5, -5, 10], radius=1, color='red'))
     world.add_entity(my3d.Sphere([5, -5, 10], radius=3))
     pane = my3d.TextPane('Text goes... HERE!  And here is additional following text...', center_point=[-8, -16, 10])
     pane.add_mouseover_effect('blue')
@@ -46,7 +47,6 @@ def visualize():
                 if -5 < x < 5:
                     point.change_color(3*(y+20), 'blue')
                 world.add_entity(point)
-
 
 
     plane = my3d.Plane(points=[(), (), ()], length=30, width=10)

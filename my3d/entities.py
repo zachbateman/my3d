@@ -56,11 +56,12 @@ class Point(Entity):
 
 
 class Line(Entity):
-    def __init__(self, point1, point2, color='red') -> None:
+    def __init__(self, point1, point2, color='red', opacity: float=1.0) -> None:
         super().__init__()
         self.point1 = point1
         self.point2 = point2
         self.color = color
+        self.opacity = opacity
 
 
 class TextPane(Entity):
@@ -85,18 +86,21 @@ class TextPane(Entity):
 
 
 class Sphere(Entity):
-    def __init__(self, location, radius: float=1.0) -> None:
+    def __init__(self, location, radius: float=1.0, color='blue', opacity: float=1.0) -> None:
         super().__init__()
         self.location = location
         self.radius = radius
+        self.color = color
+        self.opacity = opacity
 
 
 class Pipe(Entity):
-    def __init__(self, points: list, radius: float=1.0, color='blue') -> None:
+    def __init__(self, points: list, radius: float=1.0, color='blue', opacity: float=1.0) -> None:
         super().__init__()
         self.points = points
         self.radius = radius
         self.color = color
+        self.opacity = opacity
         self.segments = int(5 + self.end_to_end_length / 5)
 
     @property
