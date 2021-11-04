@@ -116,10 +116,10 @@
 
             {% for line in world.lines %}
                 {% if line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.opacity }}, {{ line.changes | tojson }}, {{ line.note | tojson }})
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, {{ line.color | tojson }}, {{ line.opacity }}, {{ line.changes | tojson }}, {{ line.note | tojson }})
                 {% endif %}
                 {% if not line.changes %}
-                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, '{{ line.color }}', {{ line.opacity }}, '', {{ line.note | tojson }})
+                    add_line({{ line.point1 | tojson }}, {{ line.point2 | tojson }}, {{ line.color | tojson }}, {{ line.opacity }}, '', {{ line.note | tojson }})
                 {% endif %}
             {% endfor %}
 
@@ -150,10 +150,10 @@
 
             {% for sphere in world.spheres %}
                 {% if sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color }}, {{ sphere.opacity }}, {{ sphere.changes | tojson }}, {{ sphere.note | tojson }});
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color | tojson }}, {{ sphere.opacity }}, {{ sphere.changes | tojson }}, {{ sphere.note | tojson }});
                 {% endif %}
                 {% if not sphere.changes %}
-                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color }}, {{ sphere.opacity }}, '', {{sphere.note | tojson }});
+                    add_sphere({{ sphere.location | tojson }}, {{ sphere.radius }}, {{ sphere.color | tojson }}, {{ sphere.opacity }}, '', {{sphere.note | tojson }});
                 {% endif %}
             {% endfor %}
 
