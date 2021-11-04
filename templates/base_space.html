@@ -57,11 +57,7 @@
         var current_object;
         var change_type, change_value;
         var frame_overlays = [];
-
-        {% for fr_overlay in world.frame_labels %}
-            frame_overlays.push('{{fr_overlay}}');
-        {% endfor %}
-
+        {% if world.frame_labels %}frame_overlays = {{ world.frame_labels | tojson }};{% endif %}
 
         function init() {
             renderer = new THREE.WebGLRenderer();
@@ -70,7 +66,6 @@
 
             camera = new THREE.PerspectiveCamera(80, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.up.set(0, 0, 1);
-            //camera.position.set(0, -30, 12);
             camera.position.set({{world.camera_x}}, {{world.camera_y}}, {{world.camera_z}});
             camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -88,7 +83,6 @@
                 controls.movementSpeed = 150;
                 controls.lookSpeed = 0.1;
             {% endif %}
-
 
 
             scene = new THREE.Scene();
@@ -391,7 +385,6 @@
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = '#88ffddff';
-            //ctx.font = '30px Arial';
             ctx.font = font_size.toString() + 'px Arial';
             for (var i=0; i < text_lines.length; i++) {
                 if (width <= 1) {
