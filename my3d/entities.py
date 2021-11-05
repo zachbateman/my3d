@@ -12,6 +12,8 @@ def convert_color(color):
         return 0x2277cc
     elif color == 'red':
         return 0x772211
+    elif isinstance(color, str) and all(char.lower() in '0123456789abcdef' for char in color) and len(color) == 6:
+        return int(color, 16)
     else:
         return color
 

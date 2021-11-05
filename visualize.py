@@ -13,7 +13,7 @@ def visualize():
                                floor_size=150,
                                floor_opacity=0.15)
 
-    pipe1 = my3d.Pipe(points=[[0, 0, 5], [5, 20, 20]])
+    pipe1 = my3d.Pipe(points=[[0, 0, 5], [5, 20, 20]], color='55ccdd')
     pipe1.note = 'Pipe1\n(Radius=default)'
 
     pipe2 = my3d.Pipe(points=[[-30, -5, -50], [-20, -2, -20], [-5, 10, -10]], radius=3, color='red', opacity=0.3)
