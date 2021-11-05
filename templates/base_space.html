@@ -107,10 +107,10 @@
 
             {% for point in world.points %}
                 {% if point.changes %}
-                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.radius }}, {{ point.fast }}, {{ point.changes | tojson}}, {{ point.note | tojson}});
+                    add_point({{ point.point | tojson }}, {{ point.color | tojson }}, {{ point.radius }}, {{ point.fast }}, {{ point.changes | tojson}}, {{ point.note | tojson}});
                 {% endif %}
                 {% if not point.changes %}
-                    add_point({{ point.point | tojson }}, {{ point.color }}, {{ point.radius }}, {{ point.fast }}, '', {{ point.note | tojson }});
+                    add_point({{ point.point | tojson }}, {{ point.color | tojson }}, {{ point.radius }}, {{ point.fast }}, '', {{ point.note | tojson }});
                 {% endif %}
             {% endfor %}
 
@@ -159,10 +159,10 @@
 
             {% for plane in world.planes %}
                 {% if plane.changes %}
-                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, {{ plane.changes | tojson }}, {{ plane.note | tojson }});
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color | tojson }}, {{ plane.changes | tojson }}, {{ plane.note | tojson }});
                 {% endif %}
                 {% if not plane.changes %}
-                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color }}, '', {{ plane.note | tojson }});
+                    add_plane({{ plane.length}}, {{ plane.width }}, {{ plane.color | tojson }}, '', {{ plane.note | tojson }});
                 {% endif %}
             {% endfor %}
 
@@ -207,9 +207,15 @@
                             change_type = current_object.changes[j][1][0];
                             change_value = current_object.changes[j][1][1];
                             if (change_type == 'color') {
+                                if (CURRENT_FRAME == 50) {
+                                    console.log(current_object.material.color);
+                                }
                                 current_object.material.color.set(change_value);
                                 try {current_object.material.emissive.set(change_value);} catch (e) {}
                                 current_object.current_color = change_value;
+                                if (CURRENT_FRAME == 50) {
+                                    console.log(current_object.material.color);
+                                }
                             } else if (change_type == 'visibility') {
                                 current_object.material.visible = change_value;
                             } else if (change_type == 'position') {

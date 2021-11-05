@@ -4,6 +4,17 @@ Module containing various base 3D entities.  Any of these entities could be comb
 import math
 
 
+def convert_color(color):
+    '''Specify specific colors for color names'''
+    if color == 'green':
+        return 0x22cc77
+    elif color == 'blue':
+        return 0x2277cc
+    elif color == 'red':
+        return 0x772211
+    else:
+        return color
+
 
 class Entity():
 
@@ -25,7 +36,7 @@ class Entity():
         ...
 
     def change_color(self, change_frame: int, new_color: str):
-        self.changes.append((change_frame if change_frame > 0 else 1, ('color', new_color)))
+        self.changes.append((change_frame if change_frame > 0 else 1, ('color', convert_color(new_color))))
 
     def change_visibility(self, change_frame: int, visible: bool):
         self.changes.append((change_frame if change_frame > 0 else 1, ('visibility', visible)))
@@ -50,7 +61,7 @@ class Point(Entity):
     def __init__(self, point, color='green', radius=0.5, fast=False) -> None:
         super().__init__()
         self.point = point
-        self.color = color
+        self.color = convert_color(color)
         self.radius = radius
         self.fast = 1 if fast else 0
 
@@ -60,7 +71,7 @@ class Line(Entity):
         super().__init__()
         self.point1 = point1
         self.point2 = point2
-        self.color = color
+        self.color = convert_color(color)
         self.opacity = opacity
 
 
@@ -90,7 +101,7 @@ class Sphere(Entity):
         super().__init__()
         self.location = location
         self.radius = radius
-        self.color = color
+        self.color = convert_color(color)
         self.opacity = opacity
 
 
@@ -99,7 +110,7 @@ class Pipe(Entity):
         super().__init__()
         self.points = points
         self.radius = radius
-        self.color = color
+        self.color = convert_color(color)
         self.opacity = opacity
         self.segments = int(5 + self.end_to_end_length / 5)
 
@@ -115,16 +126,14 @@ class Pipe(Entity):
 
 
 class Plane(Entity):
+    # Todo: ability to specify plane from 3 3D points??
     # need 3 points to define a plane in 3D...
     # need to specify length and width...
-    def __init__(self, points, length=20, width=10, color='blue'):
+    def __init__(self, length=20, width=10, color='blue'):
         super().__init__()
-        # points is to be a sequence of 3 separate (x, y, z) points
-        # these three points define a plane
-        self.points = points
         self.length = length
         self.width = width
-        self.color = color
+        self.color = convert_color(color)
 
 
 class Cuboid(Entity):

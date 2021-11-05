@@ -48,8 +48,14 @@ def visualize():
                     point.change_color(3*(y+20), 'blue')
                 world.add_entity(point)
 
+    p1 = my3d.Point((0, 0, 15), radius=1.0, fast=True)
+    p2 = my3d.Point((0, 0, 20), radius=1.0, fast=False)
+    p1.change_color(50, 'green')
+    p2.change_color(50, '22cc77')
+    world.add_entity(p1)
+    world.add_entity(p2)
 
-    plane = my3d.Plane(points=[(), (), ()], length=30, width=10)
+    plane = my3d.Plane(length=30, width=10)
     plane.change_rotationX(30, 45)
     plane.change_rotationY(60, 30)
     plane.change_rotationY(70, 30)
