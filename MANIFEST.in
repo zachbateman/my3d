@@ -1,0 +1,2 @@
+include static/*.js
+include templates/*.html

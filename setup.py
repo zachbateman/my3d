@@ -16,6 +16,7 @@ setuptools.setup(
     download_url='https://github.com/zachbateman/my3d/archive/v_0.0.0.tar.gz',
     keywords=['VISUALIZATION', 'THREE', 'DIMENSION'],
     install_requires=[],
+    include_package_data=True,
     classifiers=['Development Status :: 4 - Beta',
                    'License :: OSI Approved :: MIT License',
                    'Programming Language :: Python :: 3',
