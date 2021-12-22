@@ -34,7 +34,9 @@ class World():
         frame_labels: list=[],
         floor_size: int=300,
         floor_opacity: float=0.25,
-        camera_position: tuple=(0, -30, 12)) -> None:
+        camera_position: tuple=(0, -30, 12),
+        min_view_distance: float=0.1,
+        max_view_distance: float=1000) -> None:
         '''
         TODO: controls kwarg can be one of 'orbit', 'first_person', or 'fly'
         '''
@@ -60,6 +62,8 @@ class World():
         self.floor_size = floor_size
         self.floor_opacity = floor_opacity
         self.camera_x, self.camera_y, self.camera_z = camera_position
+        self.min_view_distance = min_view_distance
+        self.max_view_distance = max_view_distance
 
 
     @property
